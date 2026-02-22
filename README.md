@@ -1,3 +1,4 @@
+# Koala Bear Project
 Personal notes: 
 compiling:  
 arduino-cli compile --fqbn arduino:avr:uno .
@@ -10,7 +11,6 @@ arduino-cli upload -p /dev/ttyUSB0 --fqbn arduino:avr:cpu=atmega328 .
 checking:
 arduino-cli board list  
 
-# Koala Bear Project
 ## Functions  
 This bear will sit and detect how far away you are from it, and if that distance doesn't change within a certain amount of time, it will yell at you so that you would go touch grass.
 

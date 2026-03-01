@@ -1,12 +1,12 @@
 # Koala Bear Project
 Personal notes: 
 compiling:  
-arduino-cli compile --fqbn arduino:avr:uno .
-arduino-cli compile --fqbn arduino:avr:nano .
+arduino-cli compile --fqbn arduino:avr:uno .  
+arduino-cli compile --fqbn arduino:avr:nano .  
 
 uploading:  
-arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno .
-arduino-cli upload -p /dev/ttyUSB0 --fqbn arduino:avr:cpu=atmega328 .
+arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno .  
+arduino-cli upload -p /dev/ttyUSB0 --fqbn arduino:avr:cpu=atmega328 .  
 
 checking:
 arduino-cli board list  

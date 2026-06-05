@@ -1,43 +1,67 @@
+// Elisey Voichishin
 #include <Arduino.h>
 
 // Eyes variables
-int trigPin = 3; // D3
-int echoPin = 2; // D2
+int trigPin = 3;
+int echoPin = 2;
 float USDuration, USDistance;
 
-// testing pin
-int testPin = 4; //D4
-int ms = 0; // timer variable
+// speaker pin
+int testPin = 4;
+int ms = 0;
+boolean reset = true;
+boolean alarmTriggered = false;  // track if alarm already sounded
 
 void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(trigPin, OUTPUT);
     pinMode(echoPin, INPUT);
     pinMode(testPin, OUTPUT);
+    Serial.begin(9600);
 }
 
 void loop() {
   int d = distance();
-
-
-  // set timer to 3 seconds for testing
-  // If timer reaches 10 seconds without distance being greater than 60cm
-  // send signal to D4
-  // increment by 10ms (0.1s) to avoid slow system, maybe even .2 
-  if(d<60){
-    if(ms > 300){
-      digitalWrite(testPin, HIGH);
+  
+  // if user is close and timer is fully reset
+  if(d < 60 && reset) {
+    reset = false;
+    alarmTriggered = false;  // reset alarm flag when user returns
+    ms++; // increment until we hit the 3 secs again 
+  }
+// if user is close and timer is not reset fully, yell at user
+  else if(d < 60 && !reset) {
+    if(!alarmTriggered) {  // only increment if alarm hasn't triggered yet
+      ms++;
+      if(ms > 30) {
+        alarmTriggered = true;  // mark alarm as triggered
+      }
     }
-    else
-      ms+=10;
+    
+    // sound alarm if triggered
+    if(alarmTriggered) {
+      digitalWrite(testPin, HIGH);
+      delay(25);
+      digitalWrite(testPin, LOW);
+      delay(25);
+    }
   }
-  else{
-    digitalWrite(testPin, LOW);
-    ms = 0;
+  // start the countdown timer
+  else if(d > 60 && !reset) {
+    if(ms > 0) {
+      ms--;
+      if(ms == 0) {
+        reset = true;
+        alarmTriggered = false;  // reset alarm flag
+        digitalWrite(testPin, LOW);
+      }
+    }
   }
+
   delay(100);
 }
 
+//function to return the distance via the ultrasonic sensor
 double distance(){
   digitalWrite(trigPin, LOW);
   delay(1);
@@ -48,7 +72,6 @@ double distance(){
   USDuration = pulseIn(echoPin, HIGH);
   USDistance = (USDuration*0.0343)/2;
 
-  Serial.begin(9600);
   delay(10);
   return USDistance;
 }
